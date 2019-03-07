@@ -1,0 +1,18 @@
+plugins {
+    id 'org.spongepowered.plugin' version '0.8.1'
+}
+
+dependencies {
+    implementation project(':mixer-common')
+    implementation 'org.spongepowered:spongeapi:7.0.0'
+}
+
+sponge.plugin.id = pluginId
+
+shadowJar {
+    dependencies {
+        include(dependency(':mixer-common'))
+    }
+}
+
+task makeJar(dependsOn: shadowJar){}

@@ -1,0 +1,7 @@
+name: Mixer
+version: 2.0-SNAPSHOT
+main: com.funniray.mixer.MixerPaper
+api-version: 1.13
+authors: [Funniray]
+description: Mixer integration for Paper
+website: https://funniray.pro

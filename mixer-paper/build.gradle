@@ -1,0 +1,29 @@
+repositories {
+    maven {
+        name = 'destroystokyo-repo'
+        url = 'https://repo.destroystokyo.com/repository/maven-public/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+}
+
+dependencies {
+    implementation project(':mixer-common')
+    implementation 'com.destroystokyo.paper:paper-api:1.13.2-R0.1-SNAPSHOT'
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        expand 'version': project.version
+    }
+}
+
+shadowJar {
+    dependencies {
+        include(dependency(':mixer-common'))
+    }
+}
+
+task makeJar(dependsOn: shadowJar){}

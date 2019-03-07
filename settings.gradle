@@ -1,0 +1,3 @@
+rootProject.name = 'mixer'
+
+include 'mixer-common', 'mixer-paper', 'mixer-sponge'
