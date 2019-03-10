@@ -3,6 +3,9 @@ package com.funniray.mixer.interactive;
 import com.funniray.mixer.Mixer;
 import com.funniray.mixer.config.Config;
 import com.funniray.mixer.iPlayer;
+import com.funniray.mixer.interactive.listeners.StringReplacementListener;
+import com.funniray.mixer.interactive.listeners.SwitchWindowListener;
+import com.funniray.mixer.interactive.listeners.TimeoutListener;
 import com.google.common.eventbus.Subscribe;
 import com.mixer.interactive.GameClient;
 import com.mixer.interactive.event.connection.ConnectionEstablishedEvent;
@@ -49,6 +52,10 @@ public class Interactive {
         client = new GameClient(this.config.projectID, "d04e85fd1cb06e4eb9891fc118fe75893eca399955189926");
         client.connect(token,config.shareCode);
         client.getEventBus().register(this);
+
+        this.mixer.getEventBus().subscribe(new TimeoutListener());
+        this.mixer.getEventBus().subscribe(new SwitchWindowListener());
+        this.mixer.getEventBus().subscribe(new StringReplacementListener());
     }
 
     @Subscribe
@@ -84,7 +91,7 @@ public class Interactive {
                     player.sendMessage("&9&l[Mixer]&r&9 >>> "+control.getControlID()+" is "+control.getKind()+" on "+control.getSceneID());
                     controlHashMap.put(control.getControlID(),control);
                     if (control.getKind() == InteractiveControlType.BUTTON)
-                        buttonHashMap.put(control.getControlID(),new ButtonPressEvent(mixer, (ButtonControl) control));
+                        buttonHashMap.put(control.getControlID(),new ButtonPressEvent(this, mixer, (ButtonControl) control));
                 }
 
                 sceneHashMap.put(scene.getSceneID(),scene);
@@ -196,6 +203,10 @@ public class Interactive {
             client.using(GameClient.PARTICIPANT_SERVICE_PROVIDER).update(this.participantHashMap.values());
             client.using(GROUP_SERVICE_PROVIDER).update(group);
         }).start();
+    }
+
+    public Mixer getMixer() {
+        return this.mixer;
     }
 }
 

@@ -16,9 +16,11 @@ public class ButtonPressEvent extends InteractiveEvent {
     private List<InteractiveParticipant> previouslyPressed;
     private ConcurrentHashMap<String, String> textReplacement;
     private Mixer mixer;
+    private Interactive interactive;
 
-    public ButtonPressEvent(Mixer mixer, ButtonControl interactiveControl){
+    public ButtonPressEvent(Interactive interactive, Mixer mixer, ButtonControl interactiveControl){
         this.mixer = mixer;
+        this.interactive = interactive;
         this.interactiveControl = interactiveControl;
         this.reset();
     }
@@ -40,7 +42,7 @@ public class ButtonPressEvent extends InteractiveEvent {
     public String replaceString(String in) {
         String out = in;
         for(Map.Entry<String, String> stringEntry : textReplacement.entrySet()) {
-            out = out.replace(stringEntry.getKey(), stringEntry.getValue());
+            out = out.replace("%"+stringEntry.getKey()+"%", stringEntry.getValue());
         }
         return out;
     }
@@ -62,4 +64,7 @@ public class ButtonPressEvent extends InteractiveEvent {
         return this.previouslyPressed;
     }
 
+    public Interactive getInteractive() {
+        return interactive;
+    }
 }

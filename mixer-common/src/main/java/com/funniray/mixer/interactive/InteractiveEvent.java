@@ -5,7 +5,7 @@ public class InteractiveEvent {
     private boolean isCancelled = false;
     private boolean shouldCharge = true;
     private boolean shouldUpdate = false;
-    private boolean shouldReset = false;
+    private boolean shouldReset = true;
 
     public void setCancelled(boolean cancelled) {
         isCancelled = cancelled;
@@ -42,7 +42,7 @@ public class InteractiveEvent {
     void resetTempVals(){
         this.isCancelled = false;
         this.shouldCharge = true;
-        this.shouldReset = false;
+        this.shouldReset = true;
         this.shouldUpdate = false;
     }
 }
