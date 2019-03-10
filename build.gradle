@@ -31,7 +31,7 @@ subprojects {
     }
     
     dependencies {
-        implementation 'com.h2database:h2:1.3.148'
+        //implementation 'com.h2database:h2:1.3.148'
         implementation 'com.google.code.gson:gson:2.8.5'
         implementation 'com.mixer:mixer-interactive-api:3.2.0'
         implementation 'com.mixer:api:6.0.0-SNAPSHOT'
@@ -43,7 +43,7 @@ subprojects {
     
     shadowJar {
         dependencies {
-            include(dependency('com.h2database:h2:1.3.148'))
+            //include(dependency('com.h2database:h2:1.3.148'))
             include(dependency('com.mixer:mixer-interactive-api:3.2.0'))
             include(dependency('com.mixer:api:6.0.0-SNAPSHOT'))
             include(dependency('org.java-websocket:Java-WebSocket:1.3.4'))
