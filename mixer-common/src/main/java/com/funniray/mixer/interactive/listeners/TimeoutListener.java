@@ -15,7 +15,8 @@ public class TimeoutListener {
         if (meta.get("timeout") == null)
             return;
 
-        event.getInteractiveControl().setCooldown(new Date().getTime() + 1000 * meta.get("timeout").getAsJsonObject().get("value").getAsInt());
+        event.getInteractiveControl().setCooldown(new Date().getTime() + 1000 * meta.get("timeout")
+                .getAsJsonObject().get("value").getAsInt());
         event.setShouldUpdate(true);
     }
 }

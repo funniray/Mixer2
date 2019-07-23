@@ -2,9 +2,11 @@ package com.funniray.mixer;
 
 import com.funniray.mixer.config.Config;
 import com.funniray.mixer.config.ConfigParser;
+import com.funniray.mixer.interactiveListeners.RunAsServerListener;
+import com.funniray.mixer.interactiveListeners.RunCommandListener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -31,7 +33,11 @@ public final class MixerPaper extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerGameModeChangeEvent event) { //TODO: Make a command for this
-        new Mixer(this.config, new PaperPlayer(event.getPlayer()));
+    public void onJoin(PlayerJoinEvent event) { //TODO: Make a command for this
+        new Thread(()-> {
+            Mixer mixer = new Mixer(this.config, new PaperPlayer(event.getPlayer()));
+            mixer.getEventBus().subscribe(new RunAsServerListener());
+            mixer.getEventBus().subscribe(new RunCommandListener());
+        }).start();
     }
 }

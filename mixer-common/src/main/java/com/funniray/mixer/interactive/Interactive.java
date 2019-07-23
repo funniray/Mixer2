@@ -120,12 +120,12 @@ public class Interactive {
             player.sendMessage("&9&l[Mixer]&r&9 >>> " + participant.getUsername() + " pressed " + event.getControlInput().getControlID());
             player.sendMessage("&9&l[Mixer]&r&9 >>> Control: " + event.getControlInput().getRawInput());
             ButtonPressEvent val = buttonHashMap.get(event.getControlInput().getControlID()).press(participant);
-            if (val.shouldCharge()) {
+            if (val.shouldCharge()&&event.getTransaction()!=null) {
                 new Thread(() -> {
                     try {
                         event.getTransaction().capture(this.client).get();
                     } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
+                        //e.printStackTrace(); //There's no reply, don't care about this
                     }
                 }).run();
             }

@@ -35,7 +35,7 @@ public class ButtonPressEvent extends InteractiveEvent {
     ButtonPressEvent press(InteractiveParticipant user) {
         this.userPressed = user;
         this.previouslyPressed.add(user);
-        this.mixer.getEventBus().post(this);
+        this.mixer.getEventBus().post(this).now();
         return this;
     }
 

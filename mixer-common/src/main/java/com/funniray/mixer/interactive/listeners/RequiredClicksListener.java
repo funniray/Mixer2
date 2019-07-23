@@ -13,7 +13,8 @@ public class RequiredClicksListener {
         if (meta.get("requiredClicks") == null)
             return;
 
-        double clickedPercent = meta.get("requiredClicks").getAsJsonObject().get("value").getAsInt()/(double)event.getPreviouslyPressed().size();
+        double clickedPercent = meta.get("requiredClicks").getAsJsonObject().get("value").getAsInt()
+                /(double)event.getPreviouslyPressed().size();
 
         if (clickedPercent < 1) {
             event.setCancelled(true);

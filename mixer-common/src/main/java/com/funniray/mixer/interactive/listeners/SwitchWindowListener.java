@@ -13,6 +13,7 @@ public class SwitchWindowListener {
         if (meta.get("switchWindow") == null)
             return;
 
-        event.getInteractive().switchSceneForParticipant(event.getUserPressed(), meta.get("switchWindow").getAsJsonObject().get("value").getAsString());
+        event.getInteractive().switchSceneForParticipant(event.getUserPressed(),
+                meta.get("switchWindow").getAsJsonObject().get("value").getAsString());
     }
 }
