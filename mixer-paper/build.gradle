@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
     implementation project(':mixer-common')
-    implementation 'com.destroystokyo.paper:paper-api:1.13.2-R0.1-SNAPSHOT'
+    implementation 'com.destroystokyo.paper:paper-api:1.14.3-SNAPSHOT'
 }
 
 processResources {
