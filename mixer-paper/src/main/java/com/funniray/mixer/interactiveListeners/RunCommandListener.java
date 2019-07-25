@@ -1,5 +1,6 @@
 package com.funniray.mixer.interactiveListeners;
 
+import com.funniray.mixer.MixerPaper;
 import com.funniray.mixer.interactive.ButtonPressEvent;
 import com.google.gson.JsonObject;
 import net.engio.mbassy.listener.Handler;
@@ -14,8 +15,10 @@ public class RunCommandListener {
         if (meta.get("runCommand") == null)
             return;
 
-        Bukkit.getServer().dispatchCommand(Bukkit.getPlayer(event.getInteractive().getMixer().getPlayer().getUUID()),
-                event.replaceString(meta.get("runCommand").getAsJsonObject().get("value").getAsString()));
+        String command = event.replaceString(meta.get("runCommand").getAsJsonObject().get("value").getAsString());
+
+        Bukkit.getScheduler().runTask(MixerPaper.instance,() -> Bukkit.getServer()
+                .dispatchCommand(Bukkit.getPlayer(event.getInteractive().getMixer().getPlayer().getUUID()), command));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.funniray.mixer.interactiveListeners;
 
+import com.funniray.mixer.MixerPaper;
 import com.funniray.mixer.interactive.ButtonPressEvent;
 import com.google.gson.JsonObject;
 import net.engio.mbassy.listener.Handler;
@@ -14,6 +15,9 @@ public class RunAsServerListener {
         if (meta.get("runCommandAsServer") == null)
             return;
 
-        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),event.replaceString(meta.get("runCommandAsServer").getAsJsonObject().get("value").getAsString()));
+        String command = event.replaceString(meta.get("runCommandAsServer").getAsJsonObject().get("value").getAsString());
+
+        Bukkit.getScheduler().runTask(MixerPaper.instance,() -> Bukkit.getServer()
+                .dispatchCommand(Bukkit.getConsoleSender(), command));
     }
 }

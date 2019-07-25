@@ -14,11 +14,13 @@ import java.io.IOException;
 public final class MixerPaper extends JavaPlugin implements Listener {
 
     public Config config = null;
+    public static MixerPaper instance;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         //TODO: Start with command instead
+        instance = this;
         try {
             config = ConfigParser.loadConfig(this.getDataFolder().getPath() + "/config.json");
         } catch (IOException e) {
