@@ -49,6 +49,7 @@ public class StringReplacementListener {
         replacement.put("HRL",HRLBuilder.toString());
         replacement.put("presser",event.getUserPressed().getUsername());
         replacement.put("streamer",event.getInteractive().getMixer().getPlayer().getName());
+        replacement.put("input",event.getTextInput());
     }
 
 }

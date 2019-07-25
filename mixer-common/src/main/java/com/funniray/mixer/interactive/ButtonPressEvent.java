@@ -2,6 +2,7 @@ package com.funniray.mixer.interactive;
 
 import com.funniray.mixer.Mixer;
 import com.mixer.interactive.resources.control.ButtonControl;
+import com.mixer.interactive.resources.control.InteractiveControl;
 import com.mixer.interactive.resources.participant.InteractiveParticipant;
 
 import java.util.ArrayList;
@@ -12,28 +13,37 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ButtonPressEvent extends InteractiveEvent {
 
     private InteractiveParticipant userPressed;
-    private ButtonControl interactiveControl;
+    private InteractiveControl interactiveControl;
     private List<InteractiveParticipant> previouslyPressed;
     private ConcurrentHashMap<String, String> textReplacement;
+    private ConcurrentHashMap<String, String> globalVars;
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, String>> localVars;
     private Mixer mixer;
     private Interactive interactive;
+    private String textInput;
 
-    public ButtonPressEvent(Interactive interactive, Mixer mixer, ButtonControl interactiveControl){
+    public ButtonPressEvent(Interactive interactive, Mixer mixer, InteractiveControl interactiveControl){
         this.mixer = mixer;
         this.interactive = interactive;
         this.interactiveControl = interactiveControl;
+        this.globalVars = new ConcurrentHashMap<>();
+        this.localVars = new ConcurrentHashMap<>();
         this.reset();
     }
 
     void reset(){
         this.previouslyPressed = new ArrayList<>();
         this.textReplacement = new ConcurrentHashMap<>();
-        this.interactiveControl.setProgress(0F);
-        this.interactiveControl.setCooldown(0);
+        if (this.interactiveControl instanceof ButtonControl) {
+            ButtonControl control = (ButtonControl) this.interactiveControl;
+            control.setProgress(0F);
+            control.setCooldown(0);
+        }
     }
 
-    ButtonPressEvent press(InteractiveParticipant user) {
+    ButtonPressEvent press(InteractiveParticipant user, String textInput) {
         this.userPressed = user;
+        this.textInput = textInput;
         this.previouslyPressed.add(user);
         this.mixer.getEventBus().post(this).now();
         return this;
@@ -51,12 +61,37 @@ public class ButtonPressEvent extends InteractiveEvent {
         return this.textReplacement;
     }
 
+    public ConcurrentHashMap<String, String> getGlobalVars() {
+        return globalVars;
+    }
+
+    public ConcurrentHashMap<Integer, ConcurrentHashMap<String, String>> getLocalVars() {
+        return localVars;
+    }
+
+    public void setVariableForPresser(InteractiveParticipant user, String variableName, String variableText) {
+        if (this.getLocalVars().containsKey(user.getUserID())) {
+            this.getLocalVars().get(user.getUserID()).put(variableName,variableText);
+        } else {
+            ConcurrentHashMap<String,String> vars = new ConcurrentHashMap<>();
+            vars.put(variableName,variableText);
+            this.getLocalVars().put(user.getUserID(),vars);
+        }
+    }
+
+    public ConcurrentHashMap<String,String> getLocalVarsForPresser(InteractiveParticipant user) {
+        return this.getLocalVars().get(user.getUserID());
+    }
+
+    public String getTextInput() {
+        return textInput;
+    }
 
     public InteractiveParticipant getUserPressed() {
         return userPressed;
     }
 
-    public ButtonControl getInteractiveControl() {
+    public InteractiveControl getInteractiveControl() {
         return interactiveControl;
     }
 

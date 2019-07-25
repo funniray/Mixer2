@@ -9,14 +9,13 @@ import com.funniray.mixer.interactive.listeners.TimeoutListener;
 import com.google.common.eventbus.Subscribe;
 import com.mixer.interactive.GameClient;
 import com.mixer.interactive.event.connection.ConnectionEstablishedEvent;
-import com.mixer.interactive.event.control.input.ControlInputEvent;
-import com.mixer.interactive.event.control.input.ControlKeyDownEvent;
-import com.mixer.interactive.event.control.input.ControlMouseDownInputEvent;
+import com.mixer.interactive.event.control.input.*;
 import com.mixer.interactive.event.participant.ParticipantJoinEvent;
 import com.mixer.interactive.event.participant.ParticipantLeaveEvent;
 import com.mixer.interactive.resources.control.ButtonControl;
 import com.mixer.interactive.resources.control.InteractiveControl;
 import com.mixer.interactive.resources.control.InteractiveControlType;
+import com.mixer.interactive.resources.control.TextboxControl;
 import com.mixer.interactive.resources.group.InteractiveGroup;
 import com.mixer.interactive.resources.participant.InteractiveParticipant;
 import com.mixer.interactive.resources.scene.InteractiveScene;
@@ -90,8 +89,9 @@ public class Interactive {
                 for(InteractiveControl control:controls){
                     player.sendMessage("&9&l[Mixer]&r&9 >>> "+control.getControlID()+" is "+control.getKind()+" on "+control.getSceneID());
                     controlHashMap.put(control.getControlID(),control);
-                    if (control.getKind() == InteractiveControlType.BUTTON)
-                        buttonHashMap.put(control.getControlID(),new ButtonPressEvent(this, mixer, (ButtonControl) control));
+                    if (control.getKind() == InteractiveControlType.BUTTON || control.getKind() == InteractiveControlType.TEXTBOX) {
+                        buttonHashMap.put(control.getControlID(), new ButtonPressEvent(this, mixer, control));
+                    }
                 }
 
                 sceneHashMap.put(scene.getSceneID(),scene);
@@ -113,32 +113,38 @@ public class Interactive {
 
     @Subscribe
     public void onKeyDown(ControlInputEvent event){
-        if (event instanceof ControlKeyDownEvent || event instanceof ControlMouseDownInputEvent) {
-            InteractiveParticipant participant = participantHashMap.get(event.getParticipantID());
-            if (participant == null)
-                return;
-            player.sendMessage("&9&l[Mixer]&r&9 >>> " + participant.getUsername() + " pressed " + event.getControlInput().getControlID());
-            player.sendMessage("&9&l[Mixer]&r&9 >>> Control: " + event.getControlInput().getRawInput());
-            ButtonPressEvent val = buttonHashMap.get(event.getControlInput().getControlID()).press(participant);
-            if (val.shouldCharge()&&event.getTransaction()!=null) {
-                new Thread(() -> {
-                    try {
-                        event.getTransaction().capture(this.client).get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        //e.printStackTrace(); //There's no reply, don't care about this
-                    }
-                }).run();
-            }
-            if (val.shouldReset()) {
-                val.reset();
-            }
-            if (val.shouldUpdate()){
-                this.updateControl(val.getInteractiveControl());
-            }
+        if (event instanceof ControlKeyUpEvent || event instanceof ControlMouseUpInputEvent) {
+            return;
+        }
+        InteractiveParticipant participant = participantHashMap.get(event.getParticipantID());
+        if (participant == null)
+            return;
+        player.sendMessage("&9&l[Mixer]&r&9 >>> " + participant.getUsername() + " pressed " + event.getControlInput().getControlID());
+        player.sendMessage("&9&l[Mixer]&r&9 >>> Control: " + event.getControlInput().getRawInput());
+        ButtonPressEvent val = buttonHashMap.get(event.getControlInput().getControlID());
+        String submitText = null;
+        if (val.getInteractiveControl() instanceof TextboxControl) {
+            submitText = event.getControlInput().getRawInput().get("value").getAsString();
+        }
+        val.press(participant, submitText);
+        if (val.shouldCharge()&&event.getTransaction()!=null) {
+            new Thread(() -> {
+                try {
+                    event.getTransaction().capture(this.client).get();
+                } catch (InterruptedException | ExecutionException e) {
+                    //e.printStackTrace(); //There's no reply, don't care about this
+                }
+            }).run();
+        }
+        if (val.shouldReset()) {
+            val.reset();
+        }
+        if (val.shouldUpdate()){
+            this.updateControl(val.getInteractiveControl());
         }
     }
 
-    public void updateControl(ButtonControl control){
+    public void updateControl(InteractiveControl control){
         new Thread(() -> {
             try {
                 client.using(GameClient.CONTROL_SERVICE_PROVIDER).update(control).get();
