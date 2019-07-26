@@ -30,11 +30,6 @@ public class ButtonPressEvent extends InteractiveEvent {
     void reset(){
         this.previouslyPressed = new ArrayList<>();
         this.textReplacement = new ConcurrentHashMap<>();
-        if (this.interactiveControl instanceof ButtonControl) {
-            ButtonControl control = (ButtonControl) this.interactiveControl;
-            control.setProgress(0F);
-            control.setCooldown(0);
-        }
     }
 
     ButtonPressEvent press(InteractiveParticipant user, String textInput) {

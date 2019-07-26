@@ -32,6 +32,7 @@ public class RequiredClicksListener {
             event.setShouldUpdate(true);
         } else {
             control.setProgress(0F);
+            event.setCancelled(false);
             event.setShouldReset(true);
             event.setShouldUpdate(true);
         }

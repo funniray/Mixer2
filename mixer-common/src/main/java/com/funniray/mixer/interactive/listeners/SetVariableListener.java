@@ -13,11 +13,14 @@ public class SetVariableListener {
     public void onPress(ButtonPressEvent event) {
         JsonObject meta = event.getInteractiveControl().getMeta();
 
-        if (meta.get("setVariable") != null && meta.get("variable") != null) {
+        if (meta.get("setVariable") != null) {
             String variableType = "local";
+            String variable = "%input%";
 
             String variableName = meta.get("setVariable").getAsJsonObject().get("value").getAsString();
-            String variable = meta.get("variable").getAsJsonObject().get("value").getAsString();
+
+            if (meta.get("variable") != null)
+                variable = meta.get("variable").getAsJsonObject().get("value").getAsString();
 
             if (meta.get("variableType") != null) {
                 variableType = meta.get("variableType").getAsJsonObject().get("value").getAsString();
