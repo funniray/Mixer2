@@ -135,7 +135,7 @@ public class Interactive {
                 } catch (InterruptedException | ExecutionException e) {
                     //e.printStackTrace(); //There's no reply, don't care about this
                 }
-            }).run();
+            }).start();
         }
         if (val.shouldReset()) {
             val.reset();
