@@ -3,7 +3,10 @@ package com.funniray.mixer.interactive.listeners;
 import com.funniray.mixer.interactive.ButtonPressEvent;
 import com.google.gson.JsonObject;
 import net.engio.mbassy.listener.Handler;
+import net.engio.mbassy.listener.Listener;
+import net.engio.mbassy.listener.References;
 
+@Listener(references = References.Strong)
 public class SwitchWindowListener {
 
     @Handler

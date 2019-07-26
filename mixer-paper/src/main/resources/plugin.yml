@@ -5,3 +5,22 @@ api-version: 1.13
 authors: [Funniray]
 description: Mixer integration for Paper
 website: https://funniray.pro
+commands:
+  istart:
+    description: Starts the Interactive session
+    usage: /istart
+    permission: mixer.start
+  istop:
+    description: Stops the Interactive session
+    usage: /istop
+    permission: mixer.stop
+
+permissions:
+  mixer.start:
+    default: op
+  mixer.stop:
+    default: op
+  mixer.*:
+    children:
+      mixer.start: true
+      mixer.stop: true

@@ -4,15 +4,18 @@ import com.funniray.mixer.MixerPaper;
 import com.funniray.mixer.interactive.ButtonPressEvent;
 import com.google.gson.JsonObject;
 import net.engio.mbassy.listener.Handler;
+import net.engio.mbassy.listener.Listener;
+import net.engio.mbassy.listener.References;
 import org.bukkit.Bukkit;
 
+@Listener(references = References.Strong)
 public class RunCommandListener {
 
     @Handler
     public void onPress(ButtonPressEvent event) {
         JsonObject meta = event.getInteractiveControl().getMeta();
 
-        if (meta.get("runCommand") == null)
+        if (meta.get("runCommand") == null || event.isCancelled())
             return;
 
         String command = event.replaceString(meta.get("runCommand").getAsJsonObject().get("value").getAsString());

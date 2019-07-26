@@ -3,16 +3,13 @@ package com.funniray.mixer.interactive;
 import com.funniray.mixer.Mixer;
 import com.funniray.mixer.config.Config;
 import com.funniray.mixer.iPlayer;
-import com.funniray.mixer.interactive.listeners.StringReplacementListener;
-import com.funniray.mixer.interactive.listeners.SwitchWindowListener;
-import com.funniray.mixer.interactive.listeners.TimeoutListener;
+import com.funniray.mixer.interactive.listeners.*;
 import com.google.common.eventbus.Subscribe;
 import com.mixer.interactive.GameClient;
 import com.mixer.interactive.event.connection.ConnectionEstablishedEvent;
 import com.mixer.interactive.event.control.input.*;
 import com.mixer.interactive.event.participant.ParticipantJoinEvent;
 import com.mixer.interactive.event.participant.ParticipantLeaveEvent;
-import com.mixer.interactive.resources.control.ButtonControl;
 import com.mixer.interactive.resources.control.InteractiveControl;
 import com.mixer.interactive.resources.control.InteractiveControlType;
 import com.mixer.interactive.resources.control.TextboxControl;
@@ -42,6 +39,8 @@ public class Interactive {
     private ConcurrentHashMap<String, InteractiveGroup> groupHashMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, InteractiveScene> sceneHashMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, ButtonPressEvent> buttonHashMap = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, String> globalVars = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Integer, ConcurrentHashMap<String, String>> localVars = new ConcurrentHashMap<>();
 
     public Interactive(Config config, String token, iPlayer player, Mixer mixer) {
         this.config = config;
@@ -55,13 +54,15 @@ public class Interactive {
         this.mixer.getEventBus().subscribe(new TimeoutListener());
         this.mixer.getEventBus().subscribe(new SwitchWindowListener());
         this.mixer.getEventBus().subscribe(new StringReplacementListener());
+        this.mixer.getEventBus().subscribe(new SetVariableListener());
+        this.mixer.getEventBus().subscribe(new RequiredClicksListener());
     }
 
     @Subscribe
     public void onParticipantJoin(ParticipantJoinEvent event) {
         Set<InteractiveParticipant> participants = event.getParticipants();
         for (InteractiveParticipant participant : participants) {
-            player.sendMessage("&9[Mixer] >>> " + participant.getUsername() + "["+participant.getSessionID()+"] joined with group " + participant.getGroupID());
+            //player.sendMessage("&9[Mixer] >>> " + participant.getUsername() + "["+participant.getSessionID()+"] joined with group " + participant.getGroupID());
             participantHashMap.putIfAbsent(participant.getSessionID(), participant);
         }
     }
@@ -70,7 +71,7 @@ public class Interactive {
     public void onParticipantLeave(ParticipantLeaveEvent event){
         for (InteractiveParticipant user : event.getParticipants()) {
             participantHashMap.remove(user.getSessionID());
-            player.sendMessage("&9&l[Mixer]&r&9 >>> " + user.getUsername() + " left");
+            //player.sendMessage("&9&l[Mixer]&r&9 >>> " + user.getUsername() + " left");
         }
     }
 
@@ -87,7 +88,7 @@ public class Interactive {
             for(InteractiveScene scene:scenes){
                 Set<InteractiveControl> controls = scene.getControls();
                 for(InteractiveControl control:controls){
-                    player.sendMessage("&9&l[Mixer]&r&9 >>> "+control.getControlID()+" is "+control.getKind()+" on "+control.getSceneID());
+                    //player.sendMessage("&9&l[Mixer]&r&9 >>> "+control.getControlID()+" is "+control.getKind()+" on "+control.getSceneID());
                     controlHashMap.put(control.getControlID(),control);
                     if (control.getKind() == InteractiveControlType.BUTTON || control.getKind() == InteractiveControlType.TEXTBOX) {
                         buttonHashMap.put(control.getControlID(), new ButtonPressEvent(this, mixer, control));
@@ -119,8 +120,8 @@ public class Interactive {
         InteractiveParticipant participant = participantHashMap.get(event.getParticipantID());
         if (participant == null)
             return;
-        player.sendMessage("&9&l[Mixer]&r&9 >>> " + participant.getUsername() + " pressed " + event.getControlInput().getControlID());
-        player.sendMessage("&9&l[Mixer]&r&9 >>> Control: " + event.getControlInput().getRawInput());
+        //player.sendMessage("&9&l[Mixer]&r&9 >>> " + participant.getUsername() + " pressed " + event.getControlInput().getControlID());
+        //player.sendMessage("&9&l[Mixer]&r&9 >>> Control: " + event.getControlInput().getRawInput());
         ButtonPressEvent val = buttonHashMap.get(event.getControlInput().getControlID());
         String submitText = null;
         if (val.getInteractiveControl() instanceof TextboxControl) {
@@ -184,6 +185,7 @@ public class Interactive {
 
     public void disconnect(){
         this.client.disconnect();
+        player.sendMessage("&9&l[Mixer]&r&9 Interactive disconnected");
     }
 
     public void resetScene(String sceneID){

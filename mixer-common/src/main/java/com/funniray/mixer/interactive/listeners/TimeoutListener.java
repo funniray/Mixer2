@@ -4,9 +4,12 @@ import com.funniray.mixer.interactive.ButtonPressEvent;
 import com.google.gson.JsonObject;
 import com.mixer.interactive.resources.control.ButtonControl;
 import net.engio.mbassy.listener.Handler;
+import net.engio.mbassy.listener.Listener;
+import net.engio.mbassy.listener.References;
 
 import java.util.Date;
 
+@Listener(references = References.Strong)
 public class TimeoutListener {
 
     @Handler

@@ -16,8 +16,6 @@ public class ButtonPressEvent extends InteractiveEvent {
     private InteractiveControl interactiveControl;
     private List<InteractiveParticipant> previouslyPressed;
     private ConcurrentHashMap<String, String> textReplacement;
-    private ConcurrentHashMap<String, String> globalVars;
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<String, String>> localVars;
     private Mixer mixer;
     private Interactive interactive;
     private String textInput;
@@ -26,8 +24,6 @@ public class ButtonPressEvent extends InteractiveEvent {
         this.mixer = mixer;
         this.interactive = interactive;
         this.interactiveControl = interactiveControl;
-        this.globalVars = new ConcurrentHashMap<>();
-        this.localVars = new ConcurrentHashMap<>();
         this.reset();
     }
 
@@ -62,11 +58,11 @@ public class ButtonPressEvent extends InteractiveEvent {
     }
 
     public ConcurrentHashMap<String, String> getGlobalVars() {
-        return globalVars;
+        return this.interactive.globalVars;
     }
 
     public ConcurrentHashMap<Integer, ConcurrentHashMap<String, String>> getLocalVars() {
-        return localVars;
+        return this.interactive.localVars;
     }
 
     public void setVariableForPresser(InteractiveParticipant user, String variableName, String variableText) {

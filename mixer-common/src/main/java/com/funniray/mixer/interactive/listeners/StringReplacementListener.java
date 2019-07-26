@@ -3,11 +3,14 @@ package com.funniray.mixer.interactive.listeners;
 import com.funniray.mixer.interactive.ButtonPressEvent;
 import com.mixer.interactive.resources.participant.InteractiveParticipant;
 import net.engio.mbassy.listener.Handler;
+import net.engio.mbassy.listener.Listener;
+import net.engio.mbassy.listener.References;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Listener(references = References.Strong)
 public class StringReplacementListener {
 
     @Handler(priority = 100)
